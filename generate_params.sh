@@ -4,7 +4,8 @@ if [ ! -z "$1" ] && [ -d "${FRED_POPULATIONS}/$1" ]; then
 	population=$1
 	echo "synthetic_population_directory = ${FRED_POPULATIONS}" > ${PWD}/params
 	echo "synthetic_population_id = $population" >> ${PWD}/params
-		
+	echo "verbose = 0" >> ${PWD}/params
+	
 	#fips
 	#city
 	#county
