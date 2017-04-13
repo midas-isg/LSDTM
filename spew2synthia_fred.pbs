@@ -4,8 +4,8 @@
 #PBS -q batch
 # request 1 node
 #PBS -l nodes=1:ppn=64
-# request 500GB of memory
-#PBS -l mem=500gb
+# request 1000GB of memory
+#PBS -l mem=1000gb
 # request 96 hours of cpu time
 #PBS -l cput=96:00:00
 # request 96 hours of wall time
