@@ -1,15 +1,18 @@
 #!/usr/bin/sh
 
-if [ ! -z "$1" ] && [ -d "${FRED_POPULATIONS}/$1" ]; then
+if [ ! -z "$1" ]; then
 	population=$1
-	echo "synthetic_population_directory = ${FRED_POPULATIONS}" > ${PWD}/params
-	echo "synthetic_population_id = $population" >> ${PWD}/params
-	echo "verbose = 0" >> ${PWD}/params
 	
-	#fips
-	#city
-	#county
-	#state
+	echo "synthetic_population_directory = ${FRED_POPULATIONS}" > ${PWD}/params
+	
+	if [ $2 == "synthetic_population_id" ]  && [ -d "${FRED_POPULATIONS}/$1" ]; then
+		echo "synthetic_population_id = $population" >> ${PWD}/params
+	else
+		population_type=$2
+		echo "$population_type = $population" >> ${PWD}/params
+	fi
+	
+	echo "verbose = 0" >> ${PWD}/params
 	
 	#start_date
 	#seed
@@ -28,7 +31,6 @@ if [ ! -z "$1" ] && [ -d "${FRED_POPULATIONS}/$1" ]; then
 	#census_tract_visualization_mode
 	#visualization_grid_size
 	
-	#verbose
 	#debug
 
 	echo "Successfully created params. Running 'FRED' from this directory will use the generated params file."

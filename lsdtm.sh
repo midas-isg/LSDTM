@@ -8,6 +8,18 @@ function usage
 	echo "-p, --population"
 	echo "    Synthetic Population ID"
 	echo
+	echo "-f, --fips"
+	echo "    Override to use FIPS code as Synthetic Population ID"
+	echo
+	echo "-C, --city"
+	echo "    Override to use city name as Synthetic Population ID"
+	echo
+	echo "-c, --county"
+	echo "    Override to use county name as Synthetic Population ID"
+	echo
+	echo "-s, --state"
+	echo "    Override to use state name as Synthetic Population ID"	
+	echo
 	echo "-o, --output_directory"
 	echo "    Directory where the output will be generated"
 	echo
@@ -17,12 +29,31 @@ function usage
 }
 
 base_dir=$(dirname "$0")
+population_type="synthetic_population_id"
 
 while [ "$1" != "" ]; do
     case $1 in
         -p | --population )        shift
                                    population_id=$1
                                    ;;
+	-f | --fips )              shift
+				   population_type="fips"
+				   ;;
+	-C | --city )              shift
+				   if [ $population_type != "fips" ]; then
+				  	 population_type="city"
+				   fi
+				   ;;
+	-c | --county )            shift
+				   if [ $population_type != "city" ] && [ $population_type != "fips" ]; then
+				   	population_type="county"
+				   fi
+				   ;;
+	-s | --state )             shift
+				   if [ $population_type == "synthetic_population_id" ]; then
+				   	population_type="state"
+				   fi
+				   ;;
         -o | --output_directory )  shift
                                    output_directory=$1
                                    ;;
@@ -44,7 +75,11 @@ if [ ! -z $population_id ]; then
 		cd $output_directory
 	fi
 	
-	qsub -v SYNTHETIC_POPULATION_ID="$population_id" $base_dir/spew2synthia_fred.pbs 
+	if [ $population_type != "synthetic_population_id" ]; then
+		echo "Setting $population_id as $population_type"
+	fi
+	
+	qsub -v SYNTHETIC_POPULATION_ID="$population_id",POPULATION_TYPE="$population_type" $base_dir/spew2synthia_fred.pbs 
 else
 	usage
 	$(>&2 echo "Failed to provide Synthetic Population ID")

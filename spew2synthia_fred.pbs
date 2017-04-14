@@ -15,12 +15,11 @@
 # places you in the directory from which the job was submitted.  
 cd $PBS_O_WORKDIR
 # run the program
-. /mnt/lustre0/data/shared_group_data/syneco/spew2synthia/scripts/public-modules.sh
 
 module load fred/fred-phdl2.12.0-isg1.0
 module load fred_populations/spew2synthia-1.2.0
 
-generate_params.sh $SYNTHETIC_POPULATION_ID
+generate_params.sh $SYNTHETIC_POPULATION_ID $POPULATION_TYPE
 
 if [ -e params ]; then
 	FRED
