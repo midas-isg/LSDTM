@@ -11,10 +11,10 @@ function usage
 	echo "-f, --fips"
 	echo "    Override to use FIPS code as Synthetic Population ID"
 	echo
-	echo "-C, --city"
+	echo "-c, --city"
 	echo "    Override to use city name as Synthetic Population ID"
 	echo
-	echo "-c, --county"
+	echo "-C, --county"
 	echo "    Override to use county name as Synthetic Population ID"
 	echo
 	echo "-s, --state"
@@ -39,12 +39,12 @@ while [ "$1" != "" ]; do
 	-f | --fips )              shift
 				   population_type="fips"
 				   ;;
-	-C | --city )              shift
+	-c | --city )              shift
 				   if [ $population_type != "fips" ]; then
 				  	 population_type="city"
 				   fi
 				   ;;
-	-c | --county )            shift
+	-C | --county )            shift
 				   if [ $population_type != "city" ] && [ $population_type != "fips" ]; then
 				   	population_type="county"
 				   fi
