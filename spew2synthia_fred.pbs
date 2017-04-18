@@ -4,8 +4,8 @@
 #PBS -q batch
 # request 1 node
 #PBS -l nodes=1:ppn=64
-# request 1000GB of memory
-#PBS -l mem=1000gb
+# request 500GB of memory
+#PBS -l mem=500gb
 # request 96 hours of cpu time
 #PBS -l cput=96:00:00
 # request 96 hours of wall time
@@ -15,7 +15,6 @@
 # places you in the directory from which the job was submitted.  
 cd $PBS_O_WORKDIR
 # run the program
-
 module load fred/fred-phdl2.12.0-isg1.0
 module load fred_populations/spew2synthia-1.2.0
 

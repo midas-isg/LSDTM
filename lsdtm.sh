@@ -1,5 +1,10 @@
 #!/bin/sh
 
+base_dir=$(dirname "$0")
+population_type="synthetic_population_id"
+
+big_populations=("spew_1.2.0_chn", "spew_1.2.0_ind", "spew_1.2.0_usa")
+
 function usage
 {
 	echo "usage: lsdtm.sh [[[-p Synthetic Population ID] [-o Output Directory]] | [-h Help]]"
@@ -27,9 +32,6 @@ function usage
 	echo "    Display this help information"
 	echo
 }
-
-base_dir=$(dirname "$0")
-population_type="synthetic_population_id"
 
 while [ "$1" != "" ]; do
     case $1 in
@@ -79,7 +81,20 @@ if [ ! -z $population_id ]; then
 		echo "Setting $population_id as $population_type"
 	fi
 	
-	qsub -v SYNTHETIC_POPULATION_ID="$population_id",POPULATION_TYPE="$population_type" $base_dir/spew2synthia_fred.pbs 
+	use_big=false
+	
+	for i in $big_populations; do
+		if [ $population_id  == i ]; then
+			use_big=true
+			break
+		fi
+	done
+	
+	if [ ! use_big ]; then
+		qsub -v SYNTHETIC_POPULATION_ID="$population_id",POPULATION_TYPE="$population_type" $base_dir/spew2synthia_fred.pbs
+	else
+		qsub -v SYNTHETIC_POPULATION_ID="$population_id",POPULATION_TYPE="$population_type" $base_dir/spew2synthia_fred_big.pbs
+	fi
 else
 	usage
 	$(>&2 echo "Failed to provide Synthetic Population ID")
