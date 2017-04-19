@@ -3,11 +3,13 @@
 base_dir=$(dirname "$0")
 population_type="synthetic_population_id"
 
-big_populations=("spew_1.2.0_chn", "spew_1.2.0_ind", "spew_1.2.0_usa")
+big_populations[0]="spew_1.2.0_chn"
+big_populations[1]="spew_1.2.0_ind"
+big_populations[2]="spew_1.2.0_usa"
 
 function usage
 {
-	echo "usage: lsdtm.sh [[[-p Synthetic Population ID] [-o Output Directory]] | [-h Help]]"
+	echo "usage: lsdtm.sh [[[-p Synthetic Population ID] [-f|-c|-C|-s] [-o Output Directory]] | [-h Help]]"
 	echo "    This script will call a PSC PBS request to run FRED on the provided Synthetic Population ID."
 	echo
 	echo "-p, --population"
@@ -38,21 +40,17 @@ while [ "$1" != "" ]; do
         -p | --population )        shift
                                    population_id=$1
                                    ;;
-	-f | --fips )              shift
-				   population_type="fips"
+	-f | --fips )              population_type="fips"
 				   ;;
-	-c | --city )              shift
-				   if [ $population_type != "fips" ]; then
+	-c | --city )              if [ "$population_type" != "fips" ]; then
 				  	 population_type="city"
 				   fi
 				   ;;
-	-C | --county )            shift
-				   if [ $population_type != "city" ] && [ $population_type != "fips" ]; then
+	-C | --county )            if [ "$population_type" != "city" ] && [ $population_type != "fips" ]; then
 				   	population_type="county"
 				   fi
 				   ;;
-	-s | --state )             shift
-				   if [ $population_type == "synthetic_population_id" ]; then
+	-s | --state )             if [ "$population_type" == "synthetic_population_id" ]; then
 				   	population_type="state"
 				   fi
 				   ;;
@@ -68,32 +66,33 @@ while [ "$1" != "" ]; do
     shift
 done
 
-if [ ! -z $population_id ]; then
-	if [ ! -z $output_directory ]; then
-		if [ ! -d $output_directory ]; then
+if [ ! -z "$population_id" ]; then
+	if [ ! -z "$output_directory" ]; then
+		if [ ! -d "$output_directory" ]; then
 			mkdir $output_directory
 		fi
 		
 		cd $output_directory
 	fi
 	
-	if [ $population_type != "synthetic_population_id" ]; then
+	if [ "$population_type" != "synthetic_population_id" ]; then
 		echo "Setting $population_id as $population_type"
 	fi
 	
 	use_big=false
 	
-	for i in $big_populations; do
-		if [ $population_id  == i ]; then
+	for big_population in ${big_populations[@]}; do
+		if [ "$population_id" = "$big_population" ]; then
+			echo "Large population detected; requesting more memory"
 			use_big=true
 			break
 		fi
 	done
 	
-	if [ ! use_big ]; then
-		qsub -v SYNTHETIC_POPULATION_ID="$population_id",POPULATION_TYPE="$population_type" $base_dir/spew2synthia_fred.pbs
-	else
+	if [ "$use_big" = true ]; then
 		qsub -v SYNTHETIC_POPULATION_ID="$population_id",POPULATION_TYPE="$population_type" $base_dir/spew2synthia_fred_big.pbs
+	else
+		qsub -v SYNTHETIC_POPULATION_ID="$population_id",POPULATION_TYPE="$population_type" $base_dir/spew2synthia_fred.pbs
 	fi
 else
 	usage
