@@ -2,6 +2,7 @@
 
 base_dir=$(dirname "$0")
 population_type="synthetic_population_id"
+model="fred/fred-phdl2.12.0-isg1.0"
 
 big_populations[0]="spew_1.2.0_chn"
 big_populations[1]="spew_1.2.0_ind"
@@ -26,6 +27,9 @@ function usage
 	echo
 	echo "-s, --state"
 	echo "    Override to use state name as Synthetic Population ID"	
+	echo
+	echo "-m, --model"
+	echo "    Model to run population on (default is fred-phdl2.12.0-isg1.0)"
 	echo
 	echo "-o, --output_directory"
 	echo "    Directory where the output will be generated"
@@ -53,6 +57,9 @@ while [ "$1" != "" ]; do
 	-s | --state )             if [ "$population_type" == "synthetic_population_id" ]; then
 				   	population_type="state"
 				   fi
+				   ;;
+        -m | --model )		   shift
+				   model=$1
 				   ;;
         -o | --output_directory )  shift
                                    output_directory=$1
@@ -90,9 +97,9 @@ if [ ! -z "$population_id" ]; then
 	done
 	
 	if [ "$use_big" = true ]; then
-		qsub -v SYNTHETIC_POPULATION_ID="$population_id",POPULATION_TYPE="$population_type" $base_dir/spew2synthia_fred_big.pbs
+		qsub -v SYNTHETIC_POPULATION_ID="$population_id",POPULATION_TYPE="$population_type",MODEL="$model" $base_dir/spew2synthia_fred_big.pbs
 	else
-		qsub -v SYNTHETIC_POPULATION_ID="$population_id",POPULATION_TYPE="$population_type" $base_dir/spew2synthia_fred.pbs
+		qsub -v SYNTHETIC_POPULATION_ID="$population_id",POPULATION_TYPE="$population_type",MODEL="$model" $base_dir/spew2synthia_fred.pbs
 	fi
 else
 	usage
