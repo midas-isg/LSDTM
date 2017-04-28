@@ -1,5 +1,5 @@
 # declare a name for this job
-#PBS -N fred_spew2synthia_big
+# -PBS -N PBS_JOBNAME
 # request the queue (enter the possible names, if omitted, serial is the default)
 #PBS -q batch
 # request 1 node
@@ -16,10 +16,6 @@
 cd $PBS_O_WORKDIR
 # run the program
 module load $MODEL
-module load fred_populations/spew2synthia-1.2.0
-module load lsdtm/lsdtm1.0
-
-generate_params.sh $SYNTHETIC_POPULATION_ID $POPULATION_TYPE
 
 if [ -e params ]; then
 	FRED

@@ -3,6 +3,7 @@
 base_dir=$(dirname "$0")
 population_type="synthetic_population_id"
 model="fred/fred-phdl2.12.0-isg1.0"
+ecosystem="fred_populations/spew2synthia-1.2.0"
 
 big_populations[0]="spew_1.2.0_chn"
 big_populations[1]="spew_1.2.0_ind"
@@ -29,8 +30,11 @@ function usage
 	echo "    Override to use state name as Synthetic Population ID"	
 	echo
 	echo "-m, --model"
-	echo "    Model to run population on (default is fred-phdl2.12.0-isg1.0)"
+	echo "    Model to run population on (default is fred/fred-phdl2.12.0-isg1.0)"
 	echo
+	echo "-e, --ecosystem"
+        echo "    Ecosystem containing population (default is fred_populations/spew2synthia-1.2.0)"
+        echo
 	echo "-o, --output_directory"
 	echo "    Directory where the output will be generated"
 	echo
@@ -61,6 +65,9 @@ while [ "$1" != "" ]; do
         -m | --model )		   shift
 				   model=$1
 				   ;;
+	-e | --ecosystem )         shift
+                                   ecosystem=$1
+                                   ;;
         -o | --output_directory )  shift
                                    output_directory=$1
                                    ;;
@@ -86,24 +93,14 @@ if [ ! -z "$population_id" ]; then
 		echo "Setting $population_id as $population_type"
 	fi
 	
-	use_big=false
+	module load $ecosystem
+	$base_dir/generate_params.sh $population_id $population_type
+	module unload $ecosystem
 	
-	for big_population in ${big_populations[@]}; do
-		if [ "$population_id" = "$big_population" ]; then
-			echo "Large population detected; requesting more memory"
-			use_big=true
-			break
-		fi
-	done
-	
-	if [ "$use_big" = true ]; then
-		qsub -v SYNTHETIC_POPULATION_ID="$population_id",POPULATION_TYPE="$population_type",MODEL="$model" $base_dir/spew2synthia_fred_big.pbs
-	else
-		qsub -v SYNTHETIC_POPULATION_ID="$population_id",POPULATION_TYPE="$population_type",MODEL="$model" $base_dir/spew2synthia_fred.pbs
-	fi
+	$base_dir/run_dtm.sh $model $ecosystem
 else
 	usage
-	$(>&2 echo "Failed to provide Synthetic Population ID")
+	$(>&2 echo "Error: Failed to provide Synthetic Population ID")
 	$(>&2 echo "Aborted")
 fi
 
