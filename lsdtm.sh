@@ -5,10 +5,6 @@ population_type="synthetic_population_id"
 model="fred/fred-phdl2.12.0-isg1.0"
 ecosystem="fred_populations/spew2synthia-1.2.0"
 
-big_populations[0]="spew_1.2.0_chn"
-big_populations[1]="spew_1.2.0_ind"
-big_populations[2]="spew_1.2.0_usa"
-
 function usage
 {
 	echo "usage: lsdtm.sh [[[-p Synthetic Population ID] [-f|-c|-C|-s] [-o Output Directory]] | [-h Help]]"
