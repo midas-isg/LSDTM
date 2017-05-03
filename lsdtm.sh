@@ -91,8 +91,6 @@ if [ ! -z "$population_id" ]; then
 	
 	module load $ecosystem
 	$base_dir/generate_params.sh $population_id $population_type
-	module unload $ecosystem
-	
 	$base_dir/run_dtm.sh $model $ecosystem
 else
 	usage
