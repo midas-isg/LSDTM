@@ -33,7 +33,7 @@ if [ ! -z "$1" ]; then
 	
 	#debug
 
-	echo "Successfully created params. Running 'FRED' from this directory will use the generated params file."
+	echo "Successfully created params."
 	echo
 else
 	$(>&2 echo "$1 not found. Try double checking the SYNTHETIC_POPULATION_ID.")

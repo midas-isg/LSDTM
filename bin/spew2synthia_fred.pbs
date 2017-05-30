@@ -1,11 +1,11 @@
 # declare a name for this job
-#PBS -N fred_spew2synthia_big
+# -PBS -N PBS_JOBNAME
 # request the queue (enter the possible names, if omitted, serial is the default)
 #PBS -q batch
 # request 1 node
 #PBS -l nodes=1:ppn=64
-# request 1000GB of memory
-#PBS -l mem=1000gb
+# request 500GB of memory
+#PBS -l mem=500gb
 # request 96 hours of cpu time
 #PBS -l cput=96:00:00
 # request 96 hours of wall time
@@ -15,13 +15,11 @@
 # places you in the directory from which the job was submitted.  
 cd $PBS_O_WORKDIR
 # run the program
-module load fred/fred-phdl2.12.0-isg1.0
-module load fred_populations/spew2synthia-1.2.0
-
-generate_params.sh $SYNTHETIC_POPULATION_ID $POPULATION_TYPE
+module load $MODEL
 
 if [ -e params ]; then
-	FRED
+        export OMP_NUM_THREADS=16
+        FRED
 fi
+checkjob -vvv $PBS_JOBID
 
-exit 0
